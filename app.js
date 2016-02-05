@@ -19,4 +19,4 @@ app.use('/', require('./routes/index'));
 app.use('/', require('./routes/list'));
 app.use('/', require('./routes/article'));
 
-app.listen(8080);
+app.listen(process.env.PORT || 5000);
