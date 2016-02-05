@@ -1,0 +1,13 @@
+doctype html
+html
+	head
+		title= title + ' by ' + user
+		link(rel='stylesheet', href='/css/style.css')
+	body
+		h1= title
+		h2= 'by ' + user
+		div#article
+			if type=='md' || forceMD
+				!= article
+			else if type=='txt'
+				pre= article

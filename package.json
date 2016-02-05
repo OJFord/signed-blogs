@@ -1,0 +1,33 @@
+{
+  "name": "signed-blogs",
+  "version": "1.0.0",
+  "description": "Browse blogs signed by their owners on Keybase.io",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OJFord/signed-blogs.git"
+  },
+  "keywords": [
+    "keybase",
+    "blog"
+  ],
+  "author": "OJFord",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OJFord/signed-blogs/issues"
+  },
+  "homepage": "https://github.com/OJFord/signed-blogs#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cheerio": "^0.20.0",
+    "express": "^4.13.4",
+    "finish": "^0.6.3",
+    "jade": "^1.11.0",
+    "marked": "^0.3.5",
+    "path": "^0.12.7",
+    "request": "^2.69.0"
+  }
+}
