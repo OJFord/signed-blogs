@@ -1,0 +1,3 @@
+{
+    "user": "$input.params('user')"
+}
