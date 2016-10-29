@@ -43,6 +43,12 @@ resource "aws_api_gateway_integration_response" "list_letters" {
     resource_id = "${aws_api_gateway_resource.Letters.id}"
     http_method = "${aws_api_gateway_method.list_letters.http_method}"
     status_code = "${aws_api_gateway_method_response.list_letters.status_code}"
+    response_templates = {
+        "text/html"="$input.path('$')"
+    }
+    response_parameters = {
+        "method.response.header.Content-Type"="'text/html'"
+    }
 }
 
 resource "aws_api_gateway_resource" "Letter" {
