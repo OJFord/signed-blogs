@@ -29,17 +29,20 @@ resource "aws_api_gateway_integration" "list_letters" {
 }
 
 resource "aws_api_gateway_method_response" "list_letters" {
-  rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
-  resource_id = "${aws_api_gateway_resource.Letters.id}"
-  http_method = "${aws_api_gateway_method.list_letters.http_method}"
-  status_code = "200"
+    depends_on = [
+        "aws_api_gateway_integration.list_letters",
+    ]
+    rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
+    resource_id = "${aws_api_gateway_resource.Letters.id}"
+    http_method = "${aws_api_gateway_method.list_letters.http_method}"
+    status_code = "200"
 }
 
 resource "aws_api_gateway_integration_response" "list_letters" {
-  rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
-  resource_id = "${aws_api_gateway_resource.Letters.id}"
-  http_method = "${aws_api_gateway_method.list_letters.http_method}"
-  status_code = "${aws_api_gateway_method_response.list_letters.status_code}"
+    rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
+    resource_id = "${aws_api_gateway_resource.Letters.id}"
+    http_method = "${aws_api_gateway_method.list_letters.http_method}"
+    status_code = "${aws_api_gateway_method_response.list_letters.status_code}"
 }
 
 resource "aws_api_gateway_resource" "Letter" {
@@ -69,24 +72,27 @@ resource "aws_api_gateway_integration" "read_letter" {
 }
 
 resource "aws_api_gateway_method_response" "read_letter" {
-  rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
-  resource_id = "${aws_api_gateway_resource.Letter.id}"
-  http_method = "${aws_api_gateway_method.read_letter.http_method}"
-  status_code = "200"
+    depends_on = [
+        "aws_api_gateway_integration.read_letter"
+    ]
+    rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
+    resource_id = "${aws_api_gateway_resource.Letter.id}"
+    http_method = "${aws_api_gateway_method.read_letter.http_method}"
+    status_code = "200"
 }
 
 resource "aws_api_gateway_integration_response" "read_letter" {
-  rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
-  resource_id = "${aws_api_gateway_resource.Letter.id}"
-  http_method = "${aws_api_gateway_method.read_letter.http_method}"
-  status_code = "${aws_api_gateway_method_response.read_letter.status_code}"
+    rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
+    resource_id = "${aws_api_gateway_resource.Letter.id}"
+    http_method = "${aws_api_gateway_method.read_letter.http_method}"
+    status_code = "${aws_api_gateway_method_response.read_letter.status_code}"
 }
 
 resource "aws_api_gateway_deployment" "envelope" {
-  depends_on = [
-      "aws_api_gateway_integration.list_letters",
-      "aws_api_gateway_integration.read_letter"
-  ]
-  rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
-  stage_name = "${var.deploy_stage}"
+    depends_on = [
+        "aws_api_gateway_integration.list_letters",
+        "aws_api_gateway_integration.read_letter"
+    ]
+    rest_api_id = "${aws_api_gateway_rest_api.envelope.id}"
+    stage_name = "${var.deploy_stage}"
 }
