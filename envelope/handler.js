@@ -1,50 +1,62 @@
 'use strict';
-var async = require('async');
-var cheerio = require('cheerio');
-var request = require('request');
+const async = require('async');
+const cheerio = require('cheerio');
+const request = require('request');
+
+const list_response = (user) => `
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>${user}'s Signed Blog</title>
+            <link rel="stylesheet" type="text/css" href="//${user}.keybase.pub/envelope/.config/common.css">
+            <link rel="stylesheet" type="text/css" href="//${user}.keybase.pub/envelope/.config/list.css">
+        </head>
+        <body>
+            <h1>${user}\'s Signed Blog</h1>
+            <div id="articles">
+`;
+
+const list_item = (title) => `
+                <div class="article">
+                    <a href="${title}">
+                        <h2>${title}</h2>
+                    </a>
+                </div>
+`
+
+const end_list = (response) => `
+                ${response}
+            </div>
+        </body>
+    </html>
+`;
+
+function list_posts(user, callback) {
+    request(`https://keybase.pub/${user}/envelope`, function(err, _, html){
+        if(!err){
+            const $ = cheerio.load(html);
+            let files = $('.directory table').find('td.name-col a').slice(1);
+
+            async.reduce(files, list_response(user), function(memo, el, done){
+                let fname = $(el).text();
+
+                if(fname.startsWith('.')){
+                    done(null, memo);
+                } else {
+                    done(null, memo + list_item(fname));
+                }
+            }, (err, response) => callback(err, end_list(response)));
+        }
+        else{
+            callback(err);
+        }
+    });
+}
 
 exports.view = function(event, context, callback) {
     if(event.title !== undefined){
         callback(null, 'Reading single');
     } else {
-        request('https://keybase.pub/' + event.user + '/envelope', function(err, _, html){
-            if(!err){
-                var $ = cheerio.load(html);
-                var files = $('.directory table').find('td.name-col a').slice(1);
-
-                async.reduce(files, `
-                    <!DOCTYPE html>
-                    <html>
-                        <head>
-                            <title>${event.user}'s Signed Blog</title>
-                            <link rel="stylesheet" type="text/css" href="//${event.user}.keybase.pub/envelope/.config/common.css">
-                            <link rel="stylesheet" type="text/css" href="//${event.user}.keybase.pub/envelope/.config/list.css">
-                        </head>
-                        <body>
-                            <h1>${event.user}\'s Signed Blog</h1>
-                            <div id="articles">
-                `, function(memo, el, done){
-                    var fname = $(el).text();
-
-                    if(fname.startsWith('.')){
-                        done(null, memo);
-                    } else {
-                        done(null, memo + `
-                            <div class="article">
-                                <a href="${fname}">
-                                    <h2>${fname}</h2>
-                                </a>
-                            </div>
-                        `);
-                    }
-                }, function(err, response){
-                    response += '</div></body></html>';
-                    callback(err, response);
-                });
-            }
-            else{
-                callback(err);
-            }
-        });
+        list_posts(event.user, callback);
     }
 }
