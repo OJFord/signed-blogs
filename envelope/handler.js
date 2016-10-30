@@ -77,15 +77,35 @@ function list_posts(user, callback) {
     });
 }
 
-function single_post(user, fname, callback){
+function single_post(user, fname, callback) {
     let url = `https://${user}.keybase.pub/envelope/${fname}`;
     request(url, (err, _, data) => callback(err, single_response(user, fname, data)));
 }
 
-exports.view = function(event, context, callback) {
-    if(event.title !== undefined){
-        single_post(event.user, event.title, callback);
+function lookup_user(id, callback) {
+    if(id.includes('@')){
+        let username = id.split('@')[0];
+        let service = id.split('@')[1];
+        let url = `https://keybase.io/_/api/1.0/user/lookup.json?${service}=${username}`;
+
+        request(url, function(err, _, body){
+            if(err){
+                callback(err);
+            } else {
+                callback(null, JSON.parse(body).them[0].basics.username);
+            }
+        });
     } else {
-        list_posts(event.user, callback);
+        callback(null, id);
     }
+}
+
+exports.view = function(event, context, callback) {
+    lookup_user(event.user, function(err, user){
+        if(event.title !== undefined){
+            single_post(user, title, callback);
+        } else {
+            list_posts(user, callback);
+        }
+    });
 }
