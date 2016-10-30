@@ -31,19 +31,26 @@ const end_list = (response) => `
     </html>
 `;
 
-const single_response = (user, title, rendered_body) => `
+const single_response = (user, title, file) => `
     <!DOCTYPE html>
     <html>
         <head>
             <title>${user} | ${title}</title>
             <link rel="stylesheet" type="text/css" href="//${user}.keybase.pub/envelope/.config/common.css">
             <link rel="stylesheet" type="text/css" href="//${user}.keybase.pub/envelope/.config/single.css">
+            <script src='//cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js'></script>
+            <script id="post-data" type="text/plain">${file}</script>
+            <script>
+                function render() {
+                    var data = document.getElementById('post-data').text;
+                    var post = document.getElementById('post');
+                    post.innerHTML = markdown.toHTML(data);
+                }
+                window.onload = render;
+            </script>
         </head>
         <body>
-            <h1>${title}</h1>
-            <div id="post">
-                ${rendered_body}
-            </div>
+            <div id="post"></div>
         </body>
     </html>
 `
@@ -70,20 +77,9 @@ function list_posts(user, callback) {
     });
 }
 
-function render_markdown(url, callback){
-    request(url, function(err, _, html){
-        if(!err){
-            return callback(null, html); // fake it 'til you make it
-        } else {
-            return callback(err);
-        }
-    });
-}
-
 function single_post(user, fname, callback){
-    render_markdown(`https://${user}.keybase.pub/envelope/${fname}`, function(err, body){
-        callback(null, single_response(user, fname, body));
-    });
+    let url = `https://${user}.keybase.pub/envelope/${fname}`;
+    request(url, (err, _, data) => callback(err, single_response(user, fname, data)));
 }
 
 exports.view = function(event, context, callback) {
