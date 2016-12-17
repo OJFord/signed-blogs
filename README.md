@@ -15,19 +15,6 @@ Feel free to fork/PR/host your own, whatever.
 Files are pulled in from Keybase every time - no storage here (would sort of defeat the point anyway).
 
 ## Try it out:
-Search for a user on a service, e.g. `malgorithms@twitter`, or by Keybase.io name `chris`:  
-https://signed-blogs.ojford.com
+The Terraform's all ready to go, just supply AWS keys and it'll provision a Lambda, and API Gateway routing.
 
-Go directly to a known user for a list of blog posts:  
-https://signed-blogs.ojford.com/chris  
-https://signed-blogs.ojford.com/malgorithms@twitter
-
-Or straight to a plaintext (`.txt`) or markdown (`.md`) article:  
-http://signed-blogs.ojford.com/chris/plan.txt  
-
-Finally, force markdown rendering on a `.txt`:  
-http://signed-blogs.ojford.com/malgorithms@twitter/plan.txt?forceMD=true
-
-## FAQ
-### It's ugly!
-Yes.
+Then you can test it out with `${STAGE_URL}/${KEYBASE_USER}[/${POST_TITLE}`.
